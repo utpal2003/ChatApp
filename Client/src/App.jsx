@@ -1,20 +1,21 @@
-import React from 'react'
-import './App.css'
-import { Route, Routes } from 'react-router-dom'
-import Homepage from './pages/Homepage'
-import LoginPage from './pages/LoginPage'
-import ProfilePage from './pages/ProfilePage'
+import { useState } from "react";
+import AppRoutes from "./routes/AppRoutes";
 
-const App = () => {
+function App() {
+  const [dark, setDark] = useState(false);
+
   return (
-    <div className="min-h-screen w-full bg-[url('./assets/bgimage.avif')] bg-cover bg-center bg-no-repeat">
-      <Routes>
-        <Route path='/' element={<Homepage />} />
-        <Route path='/login' element={<LoginPage />} />
-        <Route path='/profilepage' element={<ProfilePage />} />
-      </Routes>
+    <div className={dark ? "dark" : ""}>
+      <button
+        onClick={() => setDark(!dark)}
+        className="fixed top-4 right-4 bg-black text-white px-3 py-1 rounded"
+      >
+        Toggle
+      </button>
+
+      <AppRoutes />
     </div>
-  )
+  );
 }
 
-export default App
+export default App;   // ✅ THIS LINE IS REQUIRED

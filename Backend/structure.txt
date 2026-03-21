@@ -1,0 +1,55 @@
+backend/
+│
+├── src/
+│
+│   ├── config/                    # Config files
+│   │   ├── db.js
+│   │   ├── cloudinary.js
+│   │   └── socket.js
+│
+│   ├── controllers/              # Business logic
+│   │   ├── authController.js
+│   │   ├── userController.js
+│   │   ├── chatController.js
+│   │   └── messageController.js
+│
+│   ├── models/                   # Mongoose schemas
+│   │   ├── User.js
+│   │   ├── Chat.js
+│   │   ├── Message.js
+│   │   └── Reaction.js
+│
+│   ├── routes/                   # API routes
+│   │   ├── authRoutes.js
+│   │   ├── userRoutes.js
+│   │   ├── chatRoutes.js
+│   │   └── messageRoutes.js
+│
+│   ├── middlewares/
+│   │   ├── authMiddleware.js
+│   │   ├── errorMiddleware.js
+│   │   └── uploadMiddleware.js
+│
+│   ├── services/                 # External services
+│   │   ├── otpService.js         # Phone OTP (Twilio)
+│   │   ├── mediaService.js       # Upload image/video
+│   │   └── socketService.js
+│
+│   ├── utils/
+│   │   ├── generateToken.js
+│   │   ├── validators.js
+│   │   └── constants.js
+│
+│   ├── sockets/                  # Socket events
+│   │   ├── chatSocket.js
+│   │   └── userSocket.js
+│
+│   ├── jobs/                     # Background jobs (optional)
+│   │   └── cleanupMessages.js
+│
+│   ├── app.js                    # Express app setup
+│   └── server.js                 # Entry point
+│
+├── .env
+├── package.json
+└── nodemon.json
