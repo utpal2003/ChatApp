@@ -9,7 +9,9 @@ const SearchBar = () => {
       placeholder="Search users..."
       value={query}
       onChange={(e) => setQuery(e.target.value)}
-      className="w-full p-2 border rounded mb-3"
+      className="w-full px-4 py-2 mb-4 rounded-chat border border-gray-300 dark:border-slate-600 
+      bg-transparent text-chat-text-main-light dark:text-chat-text-main-dark
+      focus:outline-none focus:ring-2 focus:ring-brand-primary"
     />
   );
 };
