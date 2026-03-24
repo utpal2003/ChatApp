@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
     FiCamera, FiTrash2, FiX, FiUpload,
-    FiArrowLeft, FiUser, FiInfo, FiMail, FiCheck, FiEdit3, FiShield
+    FiArrowLeft, FiUser, FiInfo, FiMail, FiCheck, FiShield, FiActivity
 } from "react-icons/fi";
 
 const ProfilePage = () => {
@@ -10,8 +10,10 @@ const ProfilePage = () => {
     const [showImageModal, setShowImageModal] = useState(false);
     const [profileImg, setProfileImg] = useState("https://i.pravatar.cc/150?img=12");
 
+    // Separated State
     const [name, setName] = useState("Alex Thompson");
-    const [bio, setBio] = useState("Available | Digital Designer & Tech Enthusiast");
+    const [status, setStatus] = useState("Focusing");
+    const [bio, setBio] = useState("Senior Digital Designer specializing in high-fidelity interface design and design systems for enterprise-grade applications.");
 
     const handleRemove = () => {
         setProfileImg(`https://ui-avatars.com/api/?name=${name}&background=6366F1&color=fff`);
@@ -19,156 +21,169 @@ const ProfilePage = () => {
     };
 
     return (
-        <div className="h-screen w-screen bg-[#F8FAFC] dark:bg-[#070b14] flex flex-col overflow-hidden font-sans">
+        <div className="h-screen w-screen bg-[#FDFDFD] dark:bg-[#0B0F1A] flex flex-col overflow-hidden font-sans antialiased text-slate-900 dark:text-slate-100">
 
-            {/* --- ELITE HEADER --- */}
-            <header className="w-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-md px-8 py-4 flex items-center justify-between border-b border-slate-200 dark:border-slate-800 shrink-0 z-20">
-                <div className="flex items-center gap-5">
+            {/* --- TOP NAVIGATION BAR --- */}
+            <header className="w-full bg-white dark:bg-slate-950 px-6 py-4 flex items-center justify-between border-b border-slate-200 dark:border-slate-800 shrink-0 z-30">
+                <div className="flex items-center gap-4">
                     <button
                         onClick={() => navigate("/")}
-                        className="group p-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-brand-primary hover:text-white rounded-xl transition-all duration-300 shadow-sm"
+                        className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors text-slate-500"
                     >
-                        <FiArrowLeft size={22} className="group-active:-translate-x-1 transition-transform" />
+                        <FiArrowLeft size={20} />
                     </button>
+                    <div className="h-6 w-[1px] bg-slate-200 dark:bg-slate-800 mx-2" />
                     <div>
-                        <h1 className="text-xl font-black text-slate-900 dark:text-white tracking-tight">Settings</h1>
-                        <p className="text-[11px] uppercase tracking-[0.2em] font-bold text-brand-primary opacity-80">Profile Identity</p>
+                        <h1 className="text-lg font-semibold tracking-tight">Account Settings</h1>
                     </div>
                 </div>
 
-                <button
-                    onClick={() => navigate("/")}
-                    className="hidden md:flex items-center gap-2 px-6 py-2.5 bg-brand-primary hover:bg-indigo-600 text-white rounded-xl font-bold text-sm shadow-lg shadow-brand-primary/20 transition-all active:scale-95"
-                >
-                    <FiCheck /> Save Changes
-                </button>
+                <div className="flex items-center gap-3">
+                    <button
+                        onClick={() => navigate("/")}
+                        className="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium text-sm transition-all shadow-sm flex items-center gap-2"
+                    >
+                        <FiCheck size={16} /> Save changes
+                    </button>
+                </div>
             </header>
 
-            {/* --- CONTENT GRID --- */}
-            <div className="flex-1 overflow-y-auto custom-scrollbar flex flex-col lg:flex-row">
+            <main className="flex-1 overflow-y-auto flex flex-col lg:flex-row">
 
-                {/* LEFT COLUMN: Image & Identity */}
-                <div className="w-full lg:w-[400px] p-8 flex flex-col items-center bg-white dark:bg-slate-900/50 border-r border-slate-200 dark:border-slate-800">
-                    <div className="relative group cursor-pointer" onClick={() => setShowImageModal(true)}>
-                        {/* Ambient Glow */}
-                        <div className="absolute inset-0 bg-brand-primary rounded-full blur-3xl opacity-20 group-hover:opacity-40 transition-opacity" />
-
-                        <div className="relative w-48 h-48 rounded-[3rem] overflow-hidden ring-[12px] ring-white dark:ring-slate-800 shadow-2xl transition-all duration-500 group-hover:rounded-full">
-                            <img src={profileImg} className="w-full h-full object-cover" alt="Profile" />
-                            <div className="absolute inset-0 bg-slate-900/60 opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col items-center justify-center backdrop-blur-[4px]">
-                                <FiCamera className="text-white mb-2 translate-y-4 group-hover:translate-y-0 transition-transform" size={32} />
-                                <span className="text-white text-[10px] font-black uppercase tracking-widest">Edit Photo</span>
+                {/* --- SIDEBAR: PHOTO & IDENTITY --- */}
+                <aside className="w-full lg:w-[380px] p-8 lg:p-12 border-r border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/20">
+                    <div className="flex flex-col items-center">
+                        <div className="relative group">
+                            <div className="w-40 h-40 rounded-2xl overflow-hidden ring-4 ring-white dark:ring-slate-950 shadow-xl relative">
+                                <img src={profileImg} className="w-full h-full object-cover" alt="Profile" />
+                                <button
+                                    onClick={() => setShowImageModal(true)}
+                                    className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm"
+                                >
+                                    <FiCamera className="text-white" size={28} />
+                                </button>
+                            </div>
+                            <div className="absolute -bottom-2 -right-2 bg-white dark:bg-slate-800 p-2 rounded-lg shadow-lg border border-slate-100 dark:border-slate-700">
+                                <FiShield className="text-indigo-500" size={18} />
                             </div>
                         </div>
 
-                        {/* Premium Badge */}
-                        <div className="absolute -bottom-2 -right-2 bg-brand-primary text-white p-3 rounded-2xl shadow-xl border-4 border-white dark:border-slate-900">
-                            <FiShield size={20} />
+                        <div className="mt-6 text-center">
+                            <h2 className="text-xl font-bold">{name}</h2>
+                            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Professional Account</p>
+                            <div className="mt-4 flex items-center gap-2 px-3 py-1.5 bg-green-50 dark:bg-green-500/10 border border-green-200 dark:border-green-500/20 rounded-full">
+                                <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                                <span className="text-[11px] font-semibold text-green-700 dark:text-green-400 uppercase tracking-wider">Verified Identity</span>
+                            </div>
                         </div>
                     </div>
+                </aside>
 
-                    <div className="mt-8 text-center">
-                        <h2 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tighter italic">{name}</h2>
-                        <span className="inline-block mt-2 px-3 py-1 bg-green-500/10 text-green-500 text-[10px] font-bold rounded-full uppercase tracking-widest">Verified Account</span>
-                    </div>
-                </div>
+                {/* --- MAIN CONTENT: CORE FIELDS --- */}
+                <section className="flex-1 p-8 lg:p-16 max-w-4xl">
+                    <div className="space-y-12">
 
-                {/* RIGHT COLUMN: Interactive Fields */}
-                <div className="flex-1 p-8 lg:p-16 max-w-5xl">
-                    <div className="grid gap-10">
+                        {/* Section Header */}
+                        <div>
+                            <h3 className="text-sm font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest mb-2">Public Information</h3>
+                            <p className="text-slate-500 text-sm">This information will be visible to other users within your organization.</p>
+                        </div>
 
-                        {/* Field: Name */}
-                        <div className="group relative">
-                            <span className="absolute -left-4 top-0 bottom-0 w-1 bg-brand-primary rounded-full scale-y-0 group-focus-within:scale-y-100 transition-transform duration-300" />
-                            <label className="text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-3 block">Name</label>
-                            <div className="relative">
-                                <FiUser className="absolute left-0 top-1/2 -translate-y-1/2 text-slate-300 dark:text-slate-700 transition-colors group-focus-within:text-brand-primary" size={24} />
+                        <div className="grid gap-8">
+                            {/* Full Name */}
+                            <div className="flex flex-col gap-2">
+                                <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                                    <FiUser className="text-slate-400" /> Full Name
+                                </label>
                                 <input
                                     type="text"
                                     value={name}
                                     onChange={(e) => setName(e.target.value)}
-                                    className="w-full bg-transparent pl-10 pr-4 py-3 text-2xl font-bold text-slate-800 dark:text-white border-b-2 border-slate-100 dark:border-slate-800 focus:border-brand-primary outline-none transition-all placeholder:opacity-20"
-                                    placeholder="Enter your name..."
+                                    className="w-full bg-transparent py-2 text-lg font-medium border-b border-slate-200 dark:border-slate-800 focus:border-indigo-500 outline-none transition-colors"
+                                    placeholder="Enter full name"
                                 />
                             </div>
-                        </div>
 
-                        {/* Field: Bio */}
-                        <div className="group relative">
-                            <span className="absolute -left-4 top-0 bottom-0 w-1 bg-brand-primary rounded-full scale-y-0 group-focus-within:scale-y-100 transition-transform duration-300" />
-                            <label className="text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-3 block">Status & Bio</label>
-                            <div className="relative">
-                                <FiInfo className="absolute left-0 top-4 text-slate-300 dark:text-slate-700 transition-colors group-focus-within:text-brand-primary" size={24} />
+                            {/* Status Section */}
+                            <div className="flex flex-col gap-2">
+                                <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                                    <FiActivity className="text-slate-400" /> Current Status
+                                </label>
+                                <div className="relative">
+                                    <input
+                                        type="text"
+                                        value={status}
+                                        onChange={(e) => setStatus(e.target.value)}
+                                        className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all"
+                                        placeholder="What are you up to?"
+                                    />
+                                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-slate-400">STATUS</span>
+                                </div>
+                            </div>
+
+                            {/* Bio Section */}
+                            <div className="flex flex-col gap-2">
+                                <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                                    <FiInfo className="text-slate-400" /> Professional Bio
+                                </label>
                                 <textarea
                                     value={bio}
                                     onChange={(e) => setBio(e.target.value)}
-                                    rows="3"
-                                    className="w-full bg-transparent pl-10 pr-4 py-3 text-lg font-medium text-slate-600 dark:text-slate-400 border-b-2 border-slate-100 dark:border-slate-800 focus:border-brand-primary outline-none transition-all resize-none"
-                                    placeholder="Tell the world about yourself..."
+                                    rows="4"
+                                    className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-sm leading-relaxed focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all resize-none"
+                                    placeholder="Describe your role and expertise..."
                                 />
                             </div>
                         </div>
 
-                        {/* Email (Protected Field) */}
-                        <div className="p-6 bg-slate-100 dark:bg-slate-800/50 rounded-[2rem] border border-dashed border-slate-200 dark:border-slate-700 flex items-center justify-between">
-                            <div className="flex items-center gap-4">
-                                <div className="p-3 bg-white dark:bg-slate-900 rounded-xl shadow-sm text-slate-400">
-                                    <FiMail size={20} />
+                        {/* Private Section */}
+                        <div className="pt-8 border-t border-slate-200 dark:border-slate-800">
+                            <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-6">Private Credentials</h3>
+                            <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-800">
+                                <div className="flex items-center gap-4">
+                                    <div className="p-2 bg-white dark:bg-slate-800 rounded-lg shadow-sm">
+                                        <FiMail className="text-slate-400" />
+                                    </div>
+                                    <div>
+                                        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-tighter">Email Address</p>
+                                        <p className="text-sm font-medium">alex.design@enterprise.com</p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Registered Email</p>
-                                    <p className="text-slate-900 dark:text-white font-bold">alex.design@email.com</p>
-                                </div>
+                                <button className="text-xs font-bold text-indigo-600 hover:underline">Change</button>
                             </div>
-                            <span className="text-[10px] font-bold text-brand-primary bg-brand-primary/10 px-3 py-1 rounded-lg">Private</span>
                         </div>
-
                     </div>
-                </div>
-            </div>
+                </section>
+            </main>
 
-            {/* MOBILE SAVE BAR */}
-            <div className="md:hidden p-6 bg-white dark:bg-slate-900 border-t dark:border-slate-800 shrink-0">
-                <button
-                    onClick={() => navigate("/")}
-                    className="w-full bg-brand-primary text-white py-4 rounded-2xl font-black shadow-xl shadow-brand-primary/30 flex items-center justify-center gap-3 active:scale-95 transition-all"
-                >
-                    <FiCheck size={20} /> SAVE CHANGES
-                </button>
-            </div>
-
-            {/* --- PROFESSIONAL MODAL (RECTANGLE) --- */}
+            {/* --- REFINED IMAGE MODAL --- */}
             {showImageModal && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
-                    <div className="absolute inset-0 bg-slate-950/95 backdrop-blur-xl animate-in fade-in duration-500" onClick={() => setShowImageModal(false)} />
-
-                    <div className="relative bg-white dark:bg-slate-900 w-full max-w-xl rounded-[3.5rem] overflow-hidden shadow-[0_0_100px_-20px_rgba(99,102,241,0.3)] border border-white/10 animate-in zoom-in-95 duration-300">
-                        <div className="p-10">
-                            <div className="flex justify-between items-center mb-8">
-                                <h3 className="text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tighter">Preview</h3>
-                                <button onClick={() => setShowImageModal(false)} className="p-3 bg-slate-100 dark:bg-slate-800 rounded-full hover:rotate-90 transition-transform">
-                                    <FiX size={24} />
-                                </button>
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                    <div className="absolute inset-0 bg-slate-950/60 backdrop-blur-md" onClick={() => setShowImageModal(false)} />
+                    <div className="relative bg-white dark:bg-slate-900 w-full max-w-lg rounded-2xl overflow-hidden shadow-2xl border border-slate-200 dark:border-slate-800 animate-in fade-in zoom-in-95 duration-200">
+                        <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
+                            <h3 className="font-bold">Update Profile Photo</h3>
+                            <button onClick={() => setShowImageModal(false)} className="text-slate-400 hover:text-slate-600 transition-colors">
+                                <FiX size={20} />
+                            </button>
+                        </div>
+                        <div className="p-6">
+                            <div className="aspect-square w-full max-w-[280px] mx-auto bg-slate-100 dark:bg-slate-800 rounded-xl overflow-hidden mb-8">
+                                <img src={profileImg} className="w-full h-full object-cover" alt="Preview" />
                             </div>
-
-                            <div className="aspect-video w-full bg-slate-100 dark:bg-slate-800 rounded-[2.5rem] overflow-hidden shadow-inner group">
-                                <img src={profileImg} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="HD Preview" />
-                            </div>
-
-                            <div className="mt-10 flex gap-4">
-                                <label className="flex-[3] flex items-center justify-center gap-3 bg-brand-primary text-white py-5 rounded-3xl font-black text-sm uppercase tracking-widest cursor-pointer hover:shadow-2xl hover:shadow-brand-primary/40 transition-all active:scale-95">
-                                    <FiUpload size={20} /> Upload New
+                            <div className="flex gap-3">
+                                <label className="flex-1 flex items-center justify-center gap-2 bg-indigo-600 text-white py-2.5 rounded-lg font-semibold text-sm cursor-pointer hover:bg-indigo-700 transition-all">
+                                    <FiUpload size={16} /> Upload Image
                                     <input type="file" className="hidden" accept="image/*" onChange={(e) => {
                                         const file = e.target.files[0];
                                         if (file) setProfileImg(URL.createObjectURL(file));
                                     }} />
                                 </label>
-
                                 <button
                                     onClick={handleRemove}
-                                    className="flex-1 flex items-center justify-center bg-slate-100 dark:bg-slate-800 text-red-500 py-5 rounded-3xl font-black hover:bg-red-500 hover:text-white transition-all active:scale-95"
+                                    className="px-4 py-2.5 bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 rounded-lg font-semibold text-sm hover:bg-red-100 transition-all"
                                 >
-                                    <FiTrash2 size={24} />
+                                    <FiTrash2 size={18} />
                                 </button>
                             </div>
                         </div>

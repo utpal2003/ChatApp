@@ -6,16 +6,16 @@ function App() {
 
   return (
     <div className={dark ? "dark" : ""}>
-      <button
+      {/* <button
         onClick={() => setDark(!dark)}
         className="fixed top-4 right-4 bg-black text-white px-3 py-1 rounded"
       >
         Toggle
-      </button>
+      </button> */}
  
       <AppRoutes />
     </div>
   );
 }
 
-export default App;   // ✅ THIS LINE IS REQUIRED
+export default App;   

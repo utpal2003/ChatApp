@@ -1,21 +1,43 @@
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { sendMessage } from "../../app/slices/messageSlice";
+import socket from "../../socket/socket"; // ✅ FIXED PATH
 
-const MessageInput = () => {
+const MessageInput = ({ selectedChat }) => {
   const [text, setText] = useState("");
+  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.auth);
+
+  const handleSend = () => {
+    if (!text.trim() || !selectedChat?._id) return;
+
+    const messageData = {
+      chatId: selectedChat._id,
+      content: text,
+      senderId: user?._id, // ✅ IMPORTANT
+    };
+
+    // ✅ SAVE TO DATABASE
+    dispatch(sendMessage(messageData));
+
+    // ✅ REAL-TIME SEND
+    socket.emit("sendMessage", messageData);
+
+    setText("");
+  };
 
   return (
-    <div className="p-3 border-t border-gray-200 dark:border-slate-700 flex gap-2">
-
+    <div className="flex gap-2">
       <input
         value={text}
         onChange={(e) => setText(e.target.value)}
+        className="flex-1 border p-2 rounded"
         placeholder="Type a message..."
-        className="flex-1 px-4 py-2 rounded-chat border border-gray-300 dark:border-slate-600 
-        bg-transparent text-chat-text-main-light dark:text-chat-text-main-dark
-        focus:outline-none focus:ring-2 focus:ring-brand-primary"
       />
-
-      <button className="bg-brand-primary text-white px-4 rounded-chat">
+      <button
+        onClick={handleSend}
+        className="bg-indigo-600 text-white px-4 rounded"
+      >
         Send
       </button>
     </div>
