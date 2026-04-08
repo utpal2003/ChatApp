@@ -1,70 +1,78 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
+import { createSlice } from "@reduxjs/toolkit";
+import { CURRENT_USER_ID } from "./userSlice";
 
-// 🔥 FETCH MESSAGES
-export const fetchMessages = createAsyncThunk(
-  "message/fetchMessages",
-  async (chatId) => {
-    const { data } = await axios.get(`/api/message/${chatId}`);
-    return data;
-  }
-);
-
-// 🔥 SEND MESSAGE
-export const sendMessage = createAsyncThunk(
-  "message/sendMessage",
-  async (msg) => {
-    const { data } = await axios.post(`/api/message`, msg);
-    return data;
-  }
-);
-
-// 🔥 MARK AS SEEN
-export const markAsSeen = createAsyncThunk(
-  "message/markAsSeen",
-  async (chatId) => {
-    await axios.put(`/api/message/seen/${chatId}`);
-    return chatId;
-  }
-);
+const initialState = {
+  messages: [
+    {
+      _id: "m1",
+      chatId: "c1",
+      sender: "u2",
+      text: "Hey bro!",
+      status: "seen",
+    },
+    {
+      _id: "m2",
+      chatId: "c1",
+      sender: "u1",
+      text: "Hello!",
+      status: "seen",
+    },
+    {
+      _id: "m3",
+      chatId: "c2",
+      sender: "u3",
+      text: "Are you coming?",
+      status: "delivered",
+    },
+  ],
+};
 
 const messageSlice = createSlice({
   name: "message",
-  initialState: {
-    messages: [],
-  },
+  initialState,
   reducers: {
-    // 🔥 SOCKET NEW MESSAGE
+    // ✅ SEND MESSAGE
+    sendMessage: (state, action) => {
+      const newMsg = {
+        _id: Date.now().toString(),
+        chatId: action.payload.chatId,
+        sender: CURRENT_USER_ID,
+        text: action.payload.text,
+        status: "sent",
+        createdAt: new Date().toISOString(),
+      };
+
+      state.messages.push(newMsg);
+    },
+
+    // ✅ RECEIVE MESSAGE (socket/backend)
+    receiveMessage: (state, action) => {
+      state.messages.push(action.payload);
+    },
+
+    // ✅ ADD MESSAGE (for UI usage)
     addMessage: (state, action) => {
       state.messages.push(action.payload);
     },
 
-    // 🔥 UPDATE MESSAGE STATUS
-    updateMessageStatus: (state, action) => {
-      const { messageId, status } = action.payload;
-      const msg = state.messages.find(m => m._id === messageId);
-      if (msg) msg.status = status;
-    }
-  },
-
-  extraReducers: (builder) => {
-    builder.addCase(fetchMessages.fulfilled, (state, action) => {
-      state.messages = action.payload;
-    });
-
-    builder.addCase(sendMessage.fulfilled, (state, action) => {
-      state.messages.push(action.payload);
-    });
-
-    builder.addCase(markAsSeen.fulfilled, (state, action) => {
-      state.messages = state.messages.map(msg =>
+    // ✅ MARK AS SEEN
+    markAsSeen: (state, action) => {
+      state.messages = state.messages.map((msg) =>
         msg.chatId === action.payload
           ? { ...msg, status: "seen" }
           : msg
       );
-    });
+    },
   },
 });
 
-export const { addMessage, updateMessageStatus } = messageSlice.actions;
+// ✅ EXPORT ACTIONS
+export const {
+  sendMessage,
+  receiveMessage,
+  addMessage,
+  markAsSeen,
+} = messageSlice.actions;
+
+// ✅ EXPORT REDUCER
 export default messageSlice.reducer;

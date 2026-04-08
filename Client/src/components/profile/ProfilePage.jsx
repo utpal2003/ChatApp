@@ -1,197 +1,333 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { updateUser } from "../../app/slices/userProfileSlice";
+
 import {
-    FiCamera, FiTrash2, FiX, FiUpload,
-    FiArrowLeft, FiUser, FiInfo, FiMail, FiCheck, FiShield, FiActivity
+  FiCamera,
+  FiTrash2,
+  FiX,
+  FiUpload,
+  FiArrowLeft,
+  FiUser,
+  FiInfo,
+  FiMail,
+  FiCheck,
+  FiShield,
+  FiActivity,
+  FiSave,
+  FiEdit2
 } from "react-icons/fi";
 
 const ProfilePage = () => {
-    const navigate = useNavigate();
-    const [showImageModal, setShowImageModal] = useState(false);
-    const [profileImg, setProfileImg] = useState("https://i.pravatar.cc/150?img=12");
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { currentUser } = useSelector((state) => state.userProfile);
 
-    // Separated State
-    const [name, setName] = useState("Alex Thompson");
-    const [status, setStatus] = useState("Focusing");
-    const [bio, setBio] = useState("Senior Digital Designer specializing in high-fidelity interface design and design systems for enterprise-grade applications.");
+  const [showImageModal, setShowImageModal] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
 
-    const handleRemove = () => {
-        setProfileImg(`https://ui-avatars.com/api/?name=${name}&background=6366F1&color=fff`);
-        setShowImageModal(false);
-    };
+  const [name, setName] = useState("");
+  const [status, setStatus] = useState("");
+  const [bio, setBio] = useState("");
+  const [phone, setPhone] = useState("");
+  const [profileImg, setProfileImg] = useState("");
 
-    return (
-        <div className="h-screen w-screen bg-[#FDFDFD] dark:bg-[#0B0F1A] flex flex-col overflow-hidden font-sans antialiased text-slate-900 dark:text-slate-100">
+  useEffect(() => {
+    if (currentUser) {
+      setName(currentUser.fullName || "");
+      setStatus(currentUser.status || "");
+      setBio(currentUser.bio || "");
+      setPhone(currentUser.phone || "");
+      setProfileImg(currentUser.profilePic || "");
+    }
+  }, [currentUser]);
 
-            {/* --- TOP NAVIGATION BAR --- */}
-            <header className="w-full bg-white dark:bg-slate-950 px-6 py-4 flex items-center justify-between border-b border-slate-200 dark:border-slate-800 shrink-0 z-30">
-                <div className="flex items-center gap-4">
-                    <button
-                        onClick={() => navigate("/")}
-                        className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors text-slate-500"
-                    >
-                        <FiArrowLeft size={20} />
-                    </button>
-                    <div className="h-6 w-[1px] bg-slate-200 dark:bg-slate-800 mx-2" />
-                    <div>
-                        <h1 className="text-lg font-semibold tracking-tight">Account Settings</h1>
-                    </div>
-                </div>
-
-                <div className="flex items-center gap-3">
-                    <button
-                        onClick={() => navigate("/")}
-                        className="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium text-sm transition-all shadow-sm flex items-center gap-2"
-                    >
-                        <FiCheck size={16} /> Save changes
-                    </button>
-                </div>
-            </header>
-
-            <main className="flex-1 overflow-y-auto flex flex-col lg:flex-row">
-
-                {/* --- SIDEBAR: PHOTO & IDENTITY --- */}
-                <aside className="w-full lg:w-[380px] p-8 lg:p-12 border-r border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/20">
-                    <div className="flex flex-col items-center">
-                        <div className="relative group">
-                            <div className="w-40 h-40 rounded-2xl overflow-hidden ring-4 ring-white dark:ring-slate-950 shadow-xl relative">
-                                <img src={profileImg} className="w-full h-full object-cover" alt="Profile" />
-                                <button
-                                    onClick={() => setShowImageModal(true)}
-                                    className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm"
-                                >
-                                    <FiCamera className="text-white" size={28} />
-                                </button>
-                            </div>
-                            <div className="absolute -bottom-2 -right-2 bg-white dark:bg-slate-800 p-2 rounded-lg shadow-lg border border-slate-100 dark:border-slate-700">
-                                <FiShield className="text-indigo-500" size={18} />
-                            </div>
-                        </div>
-
-                        <div className="mt-6 text-center">
-                            <h2 className="text-xl font-bold">{name}</h2>
-                            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Professional Account</p>
-                            <div className="mt-4 flex items-center gap-2 px-3 py-1.5 bg-green-50 dark:bg-green-500/10 border border-green-200 dark:border-green-500/20 rounded-full">
-                                <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                                <span className="text-[11px] font-semibold text-green-700 dark:text-green-400 uppercase tracking-wider">Verified Identity</span>
-                            </div>
-                        </div>
-                    </div>
-                </aside>
-
-                {/* --- MAIN CONTENT: CORE FIELDS --- */}
-                <section className="flex-1 p-8 lg:p-16 max-w-4xl">
-                    <div className="space-y-12">
-
-                        {/* Section Header */}
-                        <div>
-                            <h3 className="text-sm font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest mb-2">Public Information</h3>
-                            <p className="text-slate-500 text-sm">This information will be visible to other users within your organization.</p>
-                        </div>
-
-                        <div className="grid gap-8">
-                            {/* Full Name */}
-                            <div className="flex flex-col gap-2">
-                                <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center gap-2">
-                                    <FiUser className="text-slate-400" /> Full Name
-                                </label>
-                                <input
-                                    type="text"
-                                    value={name}
-                                    onChange={(e) => setName(e.target.value)}
-                                    className="w-full bg-transparent py-2 text-lg font-medium border-b border-slate-200 dark:border-slate-800 focus:border-indigo-500 outline-none transition-colors"
-                                    placeholder="Enter full name"
-                                />
-                            </div>
-
-                            {/* Status Section */}
-                            <div className="flex flex-col gap-2">
-                                <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center gap-2">
-                                    <FiActivity className="text-slate-400" /> Current Status
-                                </label>
-                                <div className="relative">
-                                    <input
-                                        type="text"
-                                        value={status}
-                                        onChange={(e) => setStatus(e.target.value)}
-                                        className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all"
-                                        placeholder="What are you up to?"
-                                    />
-                                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-slate-400">STATUS</span>
-                                </div>
-                            </div>
-
-                            {/* Bio Section */}
-                            <div className="flex flex-col gap-2">
-                                <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center gap-2">
-                                    <FiInfo className="text-slate-400" /> Professional Bio
-                                </label>
-                                <textarea
-                                    value={bio}
-                                    onChange={(e) => setBio(e.target.value)}
-                                    rows="4"
-                                    className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-sm leading-relaxed focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all resize-none"
-                                    placeholder="Describe your role and expertise..."
-                                />
-                            </div>
-                        </div>
-
-                        {/* Private Section */}
-                        <div className="pt-8 border-t border-slate-200 dark:border-slate-800">
-                            <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-6">Private Credentials</h3>
-                            <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-800">
-                                <div className="flex items-center gap-4">
-                                    <div className="p-2 bg-white dark:bg-slate-800 rounded-lg shadow-sm">
-                                        <FiMail className="text-slate-400" />
-                                    </div>
-                                    <div>
-                                        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-tighter">Email Address</p>
-                                        <p className="text-sm font-medium">alex.design@enterprise.com</p>
-                                    </div>
-                                </div>
-                                <button className="text-xs font-bold text-indigo-600 hover:underline">Change</button>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-            </main>
-
-            {/* --- REFINED IMAGE MODAL --- */}
-            {showImageModal && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-                    <div className="absolute inset-0 bg-slate-950/60 backdrop-blur-md" onClick={() => setShowImageModal(false)} />
-                    <div className="relative bg-white dark:bg-slate-900 w-full max-w-lg rounded-2xl overflow-hidden shadow-2xl border border-slate-200 dark:border-slate-800 animate-in fade-in zoom-in-95 duration-200">
-                        <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
-                            <h3 className="font-bold">Update Profile Photo</h3>
-                            <button onClick={() => setShowImageModal(false)} className="text-slate-400 hover:text-slate-600 transition-colors">
-                                <FiX size={20} />
-                            </button>
-                        </div>
-                        <div className="p-6">
-                            <div className="aspect-square w-full max-w-[280px] mx-auto bg-slate-100 dark:bg-slate-800 rounded-xl overflow-hidden mb-8">
-                                <img src={profileImg} className="w-full h-full object-cover" alt="Preview" />
-                            </div>
-                            <div className="flex gap-3">
-                                <label className="flex-1 flex items-center justify-center gap-2 bg-indigo-600 text-white py-2.5 rounded-lg font-semibold text-sm cursor-pointer hover:bg-indigo-700 transition-all">
-                                    <FiUpload size={16} /> Upload Image
-                                    <input type="file" className="hidden" accept="image/*" onChange={(e) => {
-                                        const file = e.target.files[0];
-                                        if (file) setProfileImg(URL.createObjectURL(file));
-                                    }} />
-                                </label>
-                                <button
-                                    onClick={handleRemove}
-                                    className="px-4 py-2.5 bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 rounded-lg font-semibold text-sm hover:bg-red-100 transition-all"
-                                >
-                                    <FiTrash2 size={18} />
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
-        </div>
+  const handleSave = async () => {
+    if (!currentUser) return;
+    
+    setIsSaving(true);
+    await dispatch(
+      updateUser({
+        id: currentUser._id,
+        data: {
+          fullName: name,
+          status,
+          bio,
+          phone,
+          profilePic: profileImg,
+        },
+      })
     );
+    
+    setIsSaving(false);
+    setShowSuccess(true);
+    setTimeout(() => setShowSuccess(false), 3000);
+  };
+
+  const handleRemove = () => {
+    setProfileImg(`https://ui-avatars.com/api/?name=${name}&background=4F46E5&color=fff&bold=true`);
+    setShowImageModal(false);
+  };
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProfileImg(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-950">
+      
+      {/* Success Toast */}
+      {showSuccess && (
+        <div className="fixed top-6 right-6 z-50 animate-in slide-in-from-top-2 fade-in duration-300">
+          <div className="bg-emerald-50 dark:bg-emerald-950/90 border border-emerald-200 dark:border-emerald-800 rounded-lg px-4 py-3 shadow-lg">
+            <div className="flex items-center gap-2">
+              <FiCheck className="text-emerald-600 dark:text-emerald-400" size={18} />
+              <span className="text-emerald-700 dark:text-emerald-300 text-sm font-medium">Profile updated successfully</span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Header */}
+      <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 sticky top-0 z-40">
+        <div className="max-w-7xl mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <button 
+                onClick={() => navigate("/")}
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors duration-200"
+              >
+                <FiArrowLeft size={20} className="text-gray-600 dark:text-gray-400" />
+              </button>
+              <div>
+                <h1 className="text-xl font-semibold text-gray-900 dark:text-white">Profile Settings</h1>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Manage your personal information</p>
+              </div>
+            </div>
+
+            <button
+              onClick={handleSave}
+              disabled={isSaving}
+              className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 text-white rounded-lg flex items-center gap-2 transition-all duration-200 shadow-sm hover:shadow-md"
+            >
+              {isSaving ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <span>Saving...</span>
+                </>
+              ) : (
+                <>
+                  <FiSave size={16} />
+                  <span>Save Changes</span>
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <main className="max-w-7xl mx-auto px-6 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          
+          {/* Left Column - Profile Card */}
+          <div className="lg:col-span-1">
+            <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden sticky top-24">
+              <div className="p-6 border-b border-gray-200 dark:border-gray-800 bg-gradient-to-br from-indigo-50/50 to-transparent dark:from-indigo-950/20">
+                <div className="flex flex-col items-center">
+                  <div className="relative group mb-4">
+                    <div className="w-32 h-32 rounded-full ring-4 ring-white dark:ring-gray-800 shadow-lg overflow-hidden bg-gradient-to-br from-indigo-500 to-purple-600">
+                      <img
+                        src={profileImg || `https://ui-avatars.com/api/?name=${name || 'User'}&background=4F46E5&color=fff&bold=true&size=128`}
+                        className="w-full h-full object-cover"
+                        alt="profile"
+                      />
+                    </div>
+                    <button 
+                      onClick={() => setShowImageModal(true)}
+                      className="absolute bottom-0 right-0 p-2 bg-white dark:bg-gray-800 rounded-full shadow-md hover:shadow-lg transition-all duration-200 border border-gray-200 dark:border-gray-700"
+                    >
+                      <FiCamera size={16} className="text-gray-600 dark:text-gray-400" />
+                    </button>
+                  </div>
+                  
+                  <h2 className="text-xl font-semibold text-gray-900 dark:text-white">{name || 'Your Name'}</h2>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{status || 'No status set'}</p>
+                  
+                  <div className="w-full mt-6 pt-6 border-t border-gray-200 dark:border-gray-800">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-gray-500 dark:text-gray-400">Member since</span>
+                      <span className="text-gray-900 dark:text-white font-medium">
+                        {new Date().toLocaleDateString()}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="p-6 space-y-3">
+                <div className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400">
+                  <FiMail size={16} className="text-indigo-500" />
+                  <span>{currentUser?.email || 'No email'}</span>
+                </div>
+                {phone && (
+                  <div className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400">
+                    <FiUser size={16} className="text-indigo-500" />
+                    <span>{phone}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column - Edit Form */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Personal Information Section */}
+            <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden">
+              <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50">
+                <h3 className="font-semibold text-gray-900 dark:text-white">Personal Information</h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Update your personal details</p>
+              </div>
+              
+              <div className="p-6 space-y-5">
+                {/* Full Name */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Full Name
+                  </label>
+                  <input
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 text-gray-900 dark:text-white"
+                    placeholder="Enter your full name"
+                  />
+                </div>
+
+                {/* Status */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Status
+                  </label>
+                  <input
+                    value={status}
+                    onChange={(e) => setStatus(e.target.value)}
+                    className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 text-gray-900 dark:text-white"
+                    placeholder="e.g., Available, Busy, etc."
+                  />
+                </div>
+
+                {/* Phone */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Phone Number
+                  </label>
+                  <input
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 text-gray-900 dark:text-white"
+                    placeholder="Enter your phone number"
+                  />
+                </div>
+
+                {/* Bio */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Bio
+                  </label>
+                  <textarea
+                    value={bio}
+                    onChange={(e) => setBio(e.target.value)}
+                    rows={4}
+                    className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 text-gray-900 dark:text-white resize-none"
+                    placeholder="Tell us a little about yourself..."
+                  />
+                </div>
+
+                {/* Email (Read Only) */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Email Address
+                  </label>
+                  <input
+                    value={currentUser?.email || ""}
+                    disabled
+                    className="w-full px-4 py-2.5 bg-gray-100 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-500 dark:text-gray-400 cursor-not-allowed"
+                  />
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Email cannot be changed</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      {/* Image Modal */}
+      {showImageModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl max-w-md w-full mx-4 animate-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-800">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Update Profile Picture</h3>
+              <button 
+                onClick={() => setShowImageModal(false)}
+                className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+              >
+                <FiX size={20} className="text-gray-500" />
+              </button>
+            </div>
+            
+            <div className="p-6">
+              <div className="flex justify-center mb-6">
+                <div className="w-32 h-32 rounded-full ring-4 ring-indigo-100 dark:ring-indigo-900/50 shadow-lg overflow-hidden">
+                  <img 
+                    src={profileImg || `https://ui-avatars.com/api/?name=${name || 'User'}&background=4F46E5&color=fff`} 
+                    className="w-full h-full object-cover"
+                    alt="profile preview" 
+                  />
+                </div>
+              </div>
+              
+              <div className="space-y-3">
+                <label className="block">
+                  <div className="relative">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      className="hidden"
+                      id="image-upload"
+                    />
+                    <label 
+                      htmlFor="image-upload"
+                      className="flex items-center justify-center gap-2 w-full px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors duration-200 cursor-pointer"
+                    >
+                      <FiUpload size={16} />
+                      <span>Upload New Image</span>
+                    </label>
+                  </div>
+                </label>
+                
+                <button 
+                  onClick={handleRemove}
+                  className="flex items-center justify-center gap-2 w-full px-4 py-2.5 border border-red-300 dark:border-red-800 text-red-700 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 rounded-lg transition-colors duration-200"
+                >
+                  <FiTrash2 size={16} />
+                  <span>Remove Current Photo</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default ProfilePage;
