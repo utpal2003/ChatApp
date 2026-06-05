@@ -30,7 +30,7 @@ const ChatWindow = ({ selectedChat }) => {
     }
   }, [selectedChat]);
 
-  // ✅ SOCKET LISTENER
+  //  SOCKET LISTENER
   useEffect(() => {
     if (!selectedChat) return;
 
