@@ -1,73 +1,189 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { FiMoreVertical, FiUser, FiLogOut, FiSettings } from "react-icons/fi";
+import { useSelector, useDispatch } from "react-redux";
+
+import {
+  FiMoreVertical,
+  FiUser,
+  FiLogOut,
+  FiSettings,
+} from "react-icons/fi";
+
 import SearchBar from "../sidebar/SearchBar";
 import ChatList from "../sidebar/ChatList";
 
+import { fetchWorldUsers } from "../../app/slices/userSlice";
+
 const Sidebar = ({ selectedChatId }) => {
-  const [openMenu, setOpenMenu] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const [openMenu, setOpenMenu] = useState(false);
+  const [activeTab, setActiveTab] = useState("friends");
+
   const { user } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    dispatch(fetchWorldUsers());
+  }, [dispatch]);
 
   const handleSelectChat = (chat) => {
     navigate(`/chat/${chat._id}`);
   };
 
   return (
-    <div className="h-full bg-white dark:bg-slate-900 flex flex-col relative">
-      {/* Header */}
+    <div className="h-full bg-white dark:bg-slate-900 flex flex-col">
+
+      {/* HEADER */}
       <div className="p-6 flex items-center justify-between shrink-0">
-        <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight italic uppercase">
+
+        <h1 className="text-2xl font-black uppercase italic text-slate-900 dark:text-white">
           Messages
         </h1>
-        
+
         <div className="relative">
-          <button onClick={() => setOpenMenu(!openMenu)} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors">
+
+          <button
+            onClick={() => setOpenMenu(!openMenu)}
+            className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+          >
             <FiMoreVertical size={22} />
           </button>
 
           {openMenu && (
             <>
-              <div className="fixed inset-0 z-40" onClick={() => setOpenMenu(false)} />
-              <div className="absolute right-0 mt-2 w-52 bg-white dark:bg-slate-800 shadow-2xl rounded-2xl border border-slate-100 dark:border-slate-700 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-200">
-                <button onClick={() => navigate("/profile")} className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
-                  <FiUser className="text-indigo-500" /> Profile Settings
+              <div
+                className="fixed inset-0 z-40"
+                onClick={() => setOpenMenu(false)}
+              />
+
+              <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 overflow-hidden z-50">
+
+                <button
+                  onClick={() => {
+                    setOpenMenu(false);
+                    navigate("/profile");
+                  }}
+                  className="w-full px-4 py-3 flex items-center gap-3 hover:bg-slate-100 dark:hover:bg-slate-700 transition"
+                >
+                  <FiUser />
+                  <span>Profile</span>
                 </button>
-                <div className="border-t border-slate-100 dark:border-slate-700" />
-                <button className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors">
-                  <FiLogOut /> Sign Out
+
+                <button
+                  onClick={() => {
+                    setOpenMenu(false);
+                    navigate("/settings");
+                  }}
+                  className="w-full px-4 py-3 flex items-center gap-3 hover:bg-slate-100 dark:hover:bg-slate-700 transition"
+                >
+                  <FiSettings />
+                  <span>Settings</span>
                 </button>
+
+                <div className="border-t border-slate-200 dark:border-slate-700" />
+
+                <button
+                  className="w-full px-4 py-3 flex items-center gap-3 text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition"
+                >
+                  <FiLogOut />
+                  <span>Logout</span>
+                </button>
+
               </div>
             </>
           )}
         </div>
       </div>
 
-      <div className="px-6 pb-4 shrink-0"><SearchBar /></div>
-
-      <div className="flex-1 overflow-y-auto px-3 custom-scrollbar">
-        <ChatList onSelectChat={handleSelectChat} selectedChatId={selectedChatId} />
+      {/* SEARCH */}
+      <div className="px-6">
+        <SearchBar />
       </div>
 
-      {/* Footer Profile Strip */}
-      <div className="p-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50">
-        <div className="flex items-center justify-between">
-          <div onClick={() => navigate("/profile")} className="flex items-center gap-3 cursor-pointer group">
-            <div className="relative">
-              <img src={user?.avatar || "https://i.pravatar.cc/150?img=12"} className="w-10 h-10 rounded-xl object-cover border-2 border-white dark:border-slate-700 group-hover:border-indigo-500 transition-all" alt="me" />
-              <span className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 border-2 border-white dark:border-slate-900 rounded-full" />
-            </div>
-            <div>
-              <p className="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white">{user?.name || "Alex Rivera"}</p>
-              <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Online</p>
-            </div>
-          </div>
-          <button onClick={() => navigate("/settings")} className="p-2 text-slate-400 hover:text-indigo-500 transition-colors">
-            <FiSettings size={20} />
+      {/* TABS */}
+      <div className="px-6 mt-4 mb-3">
+
+        <div className="flex bg-slate-100 dark:bg-slate-800 rounded-xl p-1">
+
+          <button
+            onClick={() => setActiveTab("friends")}
+            className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-all
+            ${
+              activeTab === "friends"
+                ? "bg-white dark:bg-slate-700 shadow text-indigo-600"
+                : "text-slate-500"
+            }`}
+          >
+            Friends
           </button>
+
+          <button
+            onClick={() => setActiveTab("world")}
+            className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-all
+            ${
+              activeTab === "world"
+                ? "bg-white dark:bg-slate-700 shadow text-indigo-600"
+                : "text-slate-500"
+            }`}
+          >
+            World
+          </button>
+
         </div>
+
       </div>
+
+      {/* CHAT / WORLD USERS */}
+      <div className="flex-1 overflow-y-auto px-3 custom-scrollbar">
+
+        <ChatList
+          activeTab={activeTab}
+          selectedChatId={selectedChatId}
+          onSelectChat={handleSelectChat}
+        />
+
+      </div>
+
+      {/* FOOTER */}
+      <div className="p-4 border-t border-slate-200 dark:border-slate-800">
+
+        <div
+          onClick={() => navigate("/profile")}
+          className="flex items-center gap-3 cursor-pointer group"
+        >
+
+          <div className="relative">
+
+            <img
+              src={
+                user?.profilePic ||
+                "https://i.pravatar.cc/150?img=12"
+              }
+              alt={user?.name}
+              className="w-10 h-10 rounded-xl object-cover"
+            />
+
+            <span className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white dark:border-slate-900" />
+
+          </div>
+
+          <div>
+
+            <p className="font-semibold text-sm text-slate-900 dark:text-white">
+              {user?.name}
+            </p>
+
+            <p className="text-xs text-green-500">
+              Online
+            </p>
+
+          </div>
+
+        </div>
+
+      </div>
+
     </div>
   );
 };

@@ -1,51 +1,82 @@
-// import { Routes, Route } from "react-router-dom";
-// import Login from "../pages/Auth/Login";
-// import Home from "../pages/Auth/Home"
-// import PrivateRoute from "./PrivateRoute";
+import { Routes, Route, Navigate } from "react-router-dom";
 
-// const AppRoutes = () => {
-//   return (
-//     <Routes>
-//       <Route path="/" element={<Login />} />
-//       <Route
-//         path="/home"
-//         element={
-//           <PrivateRoute>
-//             <Home />
-//           </PrivateRoute>
-//         }
-//       />
-//     </Routes>
-//   );
-// };
-
-// export default AppRoutes;
-
-
-
-
-
-import { Routes, Route } from "react-router-dom";
 import Login from "../pages/Auth/Login";
 import Home from "../pages/Auth/Home";
+
 import EditProfile from "../components/profile/EditProfile";
 import ProfilePage from "../components/profile/ProfilePage";
+
 import Settings from "../pages/settings/Settings";
 
+import ProtectedRoute from "./ProtectedRoute";
+import Register from "../pages/Auth/Register";
 
 const AppRoutes = () => {
   return (
-<Routes>
-      <Route path="/login" element={<Login />} />
+    <Routes>
 
-      {/* MAIN CHAT ROUTES */}
-      <Route path="/" element={<Home />} />
-      <Route path="/chat/:id" element={<Home />} />
+      {/* PUBLIC ROUTE */}
+      <Route
+        path="/register"
+        element={<Register />}
+      />
+      <Route
+        path="/login"
+        element={<Login />}
+      />
 
-      {/* PROFILE */}
-      <Route path="/profile" element={<ProfilePage />} />
-      <Route path="/edit-profile" element={<EditProfile />} />
-      <Route path="/settings" element={<Settings />} />
+      {/* PROTECTED ROUTES */}
+      <Route
+        path="/"
+        element={
+          <ProtectedRoute>
+            <Home />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/chat/:id"
+        element={
+          <ProtectedRoute>
+            <Home />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/profile"
+        element={
+          <ProtectedRoute>
+            <ProfilePage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/edit-profile"
+        element={
+          <ProtectedRoute>
+            <EditProfile />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/settings"
+        element={
+          <ProtectedRoute>
+            <Settings />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* FALLBACK */}
+      <Route
+        path="*"
+        element={<Navigate to="/" replace />}
+      />
+
     </Routes>
   );
 };
