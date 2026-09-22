@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { CURRENT_USER_ID } from "./userSlice";
 
 const initialState = {
   messages: [
@@ -29,44 +28,61 @@ const initialState = {
 
 const messageSlice = createSlice({
   name: "message",
+
   initialState,
+
   reducers: {
-    // ✅ SEND MESSAGE
+    // ===============================
+    // Send Message
+    // ===============================
     sendMessage: (state, action) => {
       const newMsg = {
         _id: Date.now().toString(),
         chatId: action.payload.chatId,
-        sender: CURRENT_USER_ID,
+
+        // Sender comes from payload
+        sender: action.payload.sender,
+
         text: action.payload.text,
+
         status: "sent",
+
         createdAt: new Date().toISOString(),
       };
 
       state.messages.push(newMsg);
     },
 
-    // ✅ RECEIVE MESSAGE (socket/backend)
+    // ===============================
+    // Receive Message
+    // ===============================
     receiveMessage: (state, action) => {
       state.messages.push(action.payload);
     },
 
-    // ✅ ADD MESSAGE (for UI usage)
+    // ===============================
+    // Add Message
+    // ===============================
     addMessage: (state, action) => {
       state.messages.push(action.payload);
     },
 
-    // ✅ MARK AS SEEN
+    // ===============================
+    // Mark Messages Seen
+    // ===============================
     markAsSeen: (state, action) => {
       state.messages = state.messages.map((msg) =>
         msg.chatId === action.payload
-          ? { ...msg, status: "seen" }
+          ? {
+              ...msg,
+              status: "seen",
+            }
           : msg
       );
     },
   },
 });
 
-// ✅ EXPORT ACTIONS
 export const {
   sendMessage,
   receiveMessage,
@@ -74,5 +90,6 @@ export const {
   markAsSeen,
 } = messageSlice.actions;
 
-// ✅ EXPORT REDUCER
 export default messageSlice.reducer;
+
+

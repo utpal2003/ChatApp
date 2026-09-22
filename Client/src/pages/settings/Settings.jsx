@@ -20,7 +20,7 @@ const Settings = () => {
         onConfirm: () => { }
     });
 
-    const timeOptions = ['1 week', '1 month', '3 months', '6 months', '1 year'];
+    const timeOptions = ['1 week', '1 month', '3 months', '6 month', '1 year'];
 
     // Action Handlers
     const triggerDeleteEmail = (email) => {
